@@ -1,0 +1,194 @@
+# ============================================================
+# PlatformIO
+# ============================================================
+.pio/
+.pioenvs/
+.piolibdeps/
+.ipdb
+.platformio/
+
+# ============================================================
+# Arduino IDE
+# ============================================================
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*~
+
+# Build directories
+build/
+bin/
+dist/
+
+# Arduino IDE cache
+arduino-build/
+*.dmp
+
+# Generated files
+*.elf
+*.hex
+*.bin
+*.exe
+*.map
+
+# ============================================================
+# Compiled Objects (keep sources, remove binaries)
+# ============================================================
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.pyc
+*.pyo
+*.pyd
+
+# ============================================================
+# IDE and Editors
+# ============================================================
+# Visual Studio Code
+.vscode/
+*.code-workspace
+*.code-profile
+
+# JetBrains IDEs (CLion, PlatformIO IDE, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.project
+.cproject
+.settings/
+.cdtbuild
+
+# PlatformIO IDE
+.piohome/
+
+# Other IDEs
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================================
+# Operating System Files
+# ============================================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Linux
+*~
+.cache/
+.config/
+.local/
+
+# ============================================================
+# Debug and Test Files
+# ============================================================
+*.dump
+*.core
+core.*
+*.crash
+*.log
+*.trace
+gmon.out
+
+# ============================================================
+# Secrets and Configuration
+# ============================================================
+# WiFi credentials
+secrets.h
+wifi_config.h
+network_config.h
+
+# API keys and tokens
+.env
+.env.local
+*.secret
+*.key
+*.token
+
+# Personal configuration
+config.local.h
+local_settings.h
+
+# ============================================================
+# Documentation and Temporary
+# ============================================================
+# Documentation build
+docs/_build/
+docs/build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# ============================================================
+# Serial Monitor Logs
+# ============================================================
+serial_log.txt
+monitor_log.txt
+*.log
+
+# ============================================================
+# External Libraries (if not tracked)
+# ============================================================
+lib/external/
+libraries/
+
+# ============================================================
+# Firmware Binaries (if not needed in repo)
+# ============================================================
+firmware.bin
+firmware.elf
+firmware.hex
+output/
+releases/
+
+# ============================================================
+# Testing and Coverage
+# ============================================================
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ============================================================
+# Git-specific
+# ============================================================
+.gitattributes
+.gitignore
+.gitmodules
