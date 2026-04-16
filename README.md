@@ -19,6 +19,7 @@
 - USB-HID эмуляция клавиатуры
 - Приём и исполнение команд управления через виртуальный COM-порт
 - Отправка телеметрии и подтверждений в десктопное приложение
+- Отслеживание текущего состояния питания устройства (устройство включено/выключено)
 
 ## Аппаратная часть
 
@@ -33,7 +34,7 @@
 
 - Джойстик KY-023
 
-  <img width="800" height="auto" alt="image" src="https://github.com/user-attachments/assets/7f2e5d81-ee38-4df5-8094-208e98847b0d" />
+  <img width="800" height="auto" alt="image" src="[https://github.com/user-attachments/assets/7f2e5d81-ee38-4df5-8094-208e98847b0d](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhmIdwG3Jt9Z-6KhZ1Mq0VbCZRetfCcgDRkw&s)" />
 
   - Пины подключения: (*TBD*)
 
