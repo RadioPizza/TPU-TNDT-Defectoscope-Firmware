@@ -23,7 +23,7 @@
 
 ## Аппаратная часть
 
-- Отладочная плата ESP32-S3-DevKitC-1. Модуль WROOM1 ESP32-S3-N16R8
+- Отладочная плата ESP32-S3-DevKitC-1-N8R2
 
   <img width="800" height="auto" alt="image" src="https://mischianti.org/wp-content/uploads/2023/08/vcc-gnd-studio-yd-esp32-s3-devkitc-1-clone-pinout-mischianti-high-resolution-1.png" />
 
