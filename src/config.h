@@ -6,8 +6,8 @@
  *  @{
  */
 #define FW_VERSION_MAJOR    0   /**< Мажорная версия */
-#define FW_VERSION_MINOR    2   /**< Минорная версия */
-#define FW_VERSION_PATCH    1   /**< Патч-версия */
+#define FW_VERSION_MINOR    3   /**< Минорная версия */
+#define FW_VERSION_PATCH    0   /**< Патч-версия */
 /** @} */
 
 /** @defgroup heater Нагревательный узел
@@ -20,17 +20,17 @@
  *  - 1 — первые ранние версии
  *  - 2 — версия 2026Q2 (актуальная)
  */
-#define HEATER_REVISION         2
+#define HEATER_REVISION         0
 
 #define HEATER_CHANNELS         2   /**< Количество независимых каналов нагрева */
 #define HEATER_LAMP_COUNT       4   /**< Общее количество ламп */
 #define HEATER_POWER_WATTS      2000 /**< Суммарная мощность нагревателя, Вт */
-#define HEATER_MAX_ON_TIME_S    10  /**< Максимальное время непрерывного включения, с */
-#define HEATER_MIN_PAUSE_S      20  /**< Минимальная пауза между включениями, с */
+#define HEATER_MAX_ON_TIME_S    5  /**< Максимальное время непрерывного включения, с */
+#define HEATER_MIN_PAUSE_S      10  /**< Минимальная пауза между включениями, с */
 
 /** Пины реле */
-#define HEATER_LEFT_PIN         19  /**< Левое реле */
-#define HEATER_RIGHT_PIN        20  /**< Правое реле */
+#define HEATER_LEFT_PIN         47  /**< Левое реле */
+#define HEATER_RIGHT_PIN        48  /**< Правое реле */
 /** @} */
 
 /** @defgroup heater_enable Переключатель разрешения нагрева

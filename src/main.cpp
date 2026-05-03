@@ -1,5 +1,24 @@
+/**
+ * @file main.cpp
+ * @brief Главный файл прошивки дефектоскопа. Инициализация, вывод системной информации,
+ *        тестовое управление каналами нагревателя через Serial.
+ */
+
 #include <Arduino.h>
 #include "config.h"
+#include "heater_channel.h"
+
+HeaterChannel heaterLeft(HEATER_LEFT_PIN);
+HeaterChannel heaterRight(HEATER_RIGHT_PIN);
+
+// Чтение состояния аппаратного переключателя безопасности
+bool readHeaterEnableSwitch() {
+#if HAS_HEATER_ENABLE_SWITCH
+    return digitalRead(HEATER_ENABLE_PIN) == LOW; // LOW = включено
+#else
+    return true;
+#endif
+}
 
 void setup() {
     Serial.begin(115200);
@@ -90,8 +109,113 @@ void setup() {
     // Версия прошивки
     Serial.println("\n=== Firmware Version ===");
     Serial.printf("%d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
+
+    // Инициализация нагревателя
+    heaterLeft.begin();
+    heaterRight.begin();
+#if HAS_HEATER_ENABLE_SWITCH
+    pinMode(HEATER_ENABLE_PIN, INPUT_PULLUP);
+#endif
+    Serial.println("\nHeater channels initialized. Ready for commands.");
 }
 
 void loop() {
-    delay(1000);
+    bool hwEnabled = readHeaterEnableSwitch();
+
+    heaterLeft.update();
+    heaterRight.update();
+
+        if (Serial.available()) {
+        String cmd = Serial.readStringUntil('\n');
+        cmd.trim();
+
+        if (cmd == "on left") {
+            if (!hwEnabled) {
+                Serial.println("Hardware switch off");
+            } else if (heaterLeft.isOn()) {
+                Serial.println("Left already ON");
+            } else if (!heaterLeft.canTurnOn()) {
+                unsigned long remaining = (HEATER_MIN_PAUSE_S * 1000UL) 
+                                        - (millis() - heaterLeft.getTurnOffTime());
+                Serial.printf("Left BLOCKED (cooldown, %lu ms left)\n", remaining);
+            } else {
+                heaterLeft.turnOn();
+                Serial.println("Left ON");
+            }
+        }
+        else if (cmd == "off left") {
+            heaterLeft.turnOff();
+            Serial.println("Left OFF");
+        }
+        else if (cmd == "on right") {
+            if (!hwEnabled) {
+                Serial.println("Hardware switch off");
+            } else if (heaterRight.isOn()) {
+                Serial.println("Right already ON");
+            } else if (!heaterRight.canTurnOn()) {
+                unsigned long remaining = (HEATER_MIN_PAUSE_S * 1000UL) 
+                                        - (millis() - heaterRight.getTurnOffTime());
+                Serial.printf("Right BLOCKED (cooldown, %lu ms left)\n", remaining);
+            } else {
+                heaterRight.turnOn();
+                Serial.println("Right ON");
+            }
+        }
+        else if (cmd == "off right") {
+            heaterRight.turnOff();
+            Serial.println("Right OFF");
+        }
+        else if (cmd == "on both") {
+            if (!hwEnabled) {
+                Serial.println("Hardware switch off");
+            } else {
+                bool leftReady  = heaterLeft.canTurnOn() && !heaterLeft.isOn();
+                bool rightReady = heaterRight.canTurnOn() && !heaterRight.isOn();
+
+                if (leftReady && rightReady) {
+                    heaterLeft.turnOn();
+                    heaterRight.turnOn();
+                    Serial.println("Both ON");
+                } else {
+                    // Выводим причины по каждому каналу
+                    if (!leftReady) {
+                        if (heaterLeft.isOn()) {
+                            Serial.print("Left already ON");
+                        } else {
+                            unsigned long rem = (HEATER_MIN_PAUSE_S * 1000UL) 
+                                              - (millis() - heaterLeft.getTurnOffTime());
+                            Serial.printf("Left BLOCKED (cooldown, %lu ms left)", rem);
+                        }
+                        Serial.print("; ");
+                    }
+                    if (!rightReady) {
+                        if (heaterRight.isOn()) {
+                            Serial.print("Right already ON");
+                        } else {
+                            unsigned long rem = (HEATER_MIN_PAUSE_S * 1000UL) 
+                                              - (millis() - heaterRight.getTurnOffTime());
+                            Serial.printf("Right BLOCKED (cooldown, %lu ms left)", rem);
+                        }
+                    }
+                    Serial.println(" -> Both NOT turned on");
+                }
+            }
+        }
+        else if (cmd == "off both") {
+            heaterLeft.turnOff();
+            heaterRight.turnOff();
+            Serial.println("Both OFF");
+        }
+        else if (cmd == "status") {
+            Serial.printf("HW enable: %d | Left: %d | Right: %d | LeftCan: %d | RightCan: %d\n",
+                          hwEnabled,
+                          heaterLeft.isOn(), heaterRight.isOn(),
+                          heaterLeft.canTurnOn(), heaterRight.canTurnOn());
+        }
+        else if (cmd.length() > 0) {
+            Serial.println("Unknown command. Use: on left/right/both, off left/right/both, status");
+        }
+    }
+
+    delay(10);
 }
