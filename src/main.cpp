@@ -125,7 +125,7 @@ void loop() {
     heaterLeft.update();
     heaterRight.update();
 
-        if (Serial.available()) {
+    if (Serial.available()) {
         String cmd = Serial.readStringUntil('\n');
         cmd.trim();
 
@@ -135,9 +135,10 @@ void loop() {
             } else if (heaterLeft.isOn()) {
                 Serial.println("Left already ON");
             } else if (!heaterLeft.canTurnOn()) {
-                unsigned long remaining = (HEATER_MIN_PAUSE_S * 1000UL) 
-                                        - (millis() - heaterLeft.getTurnOffTime());
-                Serial.printf("Left BLOCKED (cooldown, %lu ms left)\n", remaining);
+                uint32_t remaining = (static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U)
+                                     - (millis() - heaterLeft.getTurnOffTime());
+                // На ESP32 unsigned int – 32 бита, %u подходит под uint32_t
+                Serial.printf("Left BLOCKED (cooldown, %u ms left)\n", remaining);
             } else {
                 heaterLeft.turnOn();
                 Serial.println("Left ON");
@@ -153,9 +154,9 @@ void loop() {
             } else if (heaterRight.isOn()) {
                 Serial.println("Right already ON");
             } else if (!heaterRight.canTurnOn()) {
-                unsigned long remaining = (HEATER_MIN_PAUSE_S * 1000UL) 
-                                        - (millis() - heaterRight.getTurnOffTime());
-                Serial.printf("Right BLOCKED (cooldown, %lu ms left)\n", remaining);
+                uint32_t remaining = (static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U)
+                                     - (millis() - heaterRight.getTurnOffTime());
+                Serial.printf("Right BLOCKED (cooldown, %u ms left)\n", remaining);
             } else {
                 heaterRight.turnOn();
                 Serial.println("Right ON");
@@ -182,9 +183,9 @@ void loop() {
                         if (heaterLeft.isOn()) {
                             Serial.print("Left already ON");
                         } else {
-                            unsigned long rem = (HEATER_MIN_PAUSE_S * 1000UL) 
-                                              - (millis() - heaterLeft.getTurnOffTime());
-                            Serial.printf("Left BLOCKED (cooldown, %lu ms left)", rem);
+                            uint32_t rem = (static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U)
+                                           - (millis() - heaterLeft.getTurnOffTime());
+                            Serial.printf("Left BLOCKED (cooldown, %u ms left)", rem);
                         }
                         Serial.print("; ");
                     }
@@ -192,9 +193,9 @@ void loop() {
                         if (heaterRight.isOn()) {
                             Serial.print("Right already ON");
                         } else {
-                            unsigned long rem = (HEATER_MIN_PAUSE_S * 1000UL) 
-                                              - (millis() - heaterRight.getTurnOffTime());
-                            Serial.printf("Right BLOCKED (cooldown, %lu ms left)", rem);
+                            uint32_t rem = (static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U)
+                                           - (millis() - heaterRight.getTurnOffTime());
+                            Serial.printf("Right BLOCKED (cooldown, %u ms left)", rem);
                         }
                     }
                     Serial.println(" -> Both NOT turned on");

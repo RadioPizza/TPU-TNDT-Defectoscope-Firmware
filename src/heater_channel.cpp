@@ -22,17 +22,17 @@ void HeaterChannel::begin() {
 }
 
 void HeaterChannel::update() {
-    unsigned long now = millis();
+    uint32_t now = millis();
 
     if (_state) {
         // Автоотключение при превышении лимита времени
-        if (now - _turnOnTime >= static_cast<unsigned long>(HEATER_MAX_ON_TIME_S) * 1000UL) {
+        if (now - _turnOnTime >= static_cast<uint32_t>(HEATER_MAX_ON_TIME_S) * 1000U) {
             turnOff();
         }
     } else {
         // Снятие блокировки после паузы
         if (_cooldownActive &&
-            now - _turnOffTime >= static_cast<unsigned long>(HEATER_MIN_PAUSE_S) * 1000UL) {
+            now - _turnOffTime >= static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U) {
             _cooldownActive = false;
         }
     }
@@ -66,7 +66,7 @@ bool HeaterChannel::canTurnOn() const {
     return !_state && !_cooldownActive;
 }
 
-unsigned long HeaterChannel::getTurnOffTime() const {
+uint32_t HeaterChannel::getTurnOffTime() const {
     return _turnOffTime;
 }
 

@@ -13,6 +13,7 @@
 #define HEATER_CHANNEL_H
 
 #include <Arduino.h>
+#include <stdint.h>          // uint8_t, uint32_t и т.д.
 #include "config.h"
 
 /**
@@ -78,17 +79,17 @@ public:
 
     /**
      * @brief Возвращает метку времени последнего выключения (мс).
-     * @return unsigned long время в мс (millis).
+     * @return Время в миллисекундах (millis).
      * @note Используется для отладки и вывода оставшегося времени блокировки.
      */
-    unsigned long getTurnOffTime() const;
+    uint32_t getTurnOffTime() const;
 
 private:
-    uint8_t _pin;               ///< Номер пина реле
-    bool _state;                ///< Текущее состояние (вкл/выкл)
-    unsigned long _turnOnTime;  ///< Метка времени последнего включения (мс)
-    unsigned long _turnOffTime; ///< Метка времени последнего выключения (мс)
-    bool _cooldownActive;       ///< Активна ли пауза после выключения
+    uint8_t  _pin;               ///< Номер пина реле
+    bool     _state;             ///< Текущее состояние (вкл/выкл)
+    uint32_t _turnOnTime;        ///< Метка времени последнего включения (мс)
+    uint32_t _turnOffTime;       ///< Метка времени последнего выключения (мс)
+    bool     _cooldownActive;    ///< Активна ли пауза после выключения
 
     /**
      * @brief Непосредственно подать HIGH или LOW на пин реле.
