@@ -3,7 +3,7 @@
 
 // ================== Версия прошивки ==================
 #define FW_VERSION_MAJOR    0
-#define FW_VERSION_MINOR    1
+#define FW_VERSION_MINOR    2
 #define FW_VERSION_PATCH    0
 
 // ================== Нагревательный узел ==================
@@ -19,14 +19,14 @@
 #define HEATER_RIGHT_PIN        20
 
 // ================== Переключатель разрешения нагрева ==================
-#define HAS_HEATER_ENABLE_SWITCH 1
+#define HAS_HEATER_ENABLE_SWITCH 0
 #if HAS_HEATER_ENABLE_SWITCH
   #define HEATER_ENABLE_PIN     10
   #define HEATER_ENABLE_GND     9
 #endif
 
 // ================== Джойстик ==================
-#define HAS_JOYSTICK            1
+#define HAS_JOYSTICK            0
 #if HAS_JOYSTICK
   #define JOY_X_PIN             1
   #define JOY_Y_PIN             2
@@ -38,7 +38,7 @@
 #endif
 
 // ================== Кнопка «Старт» (правая рукоять) ==================
-#define HAS_START_BUTTON        1
+#define HAS_START_BUTTON        0
 #if HAS_START_BUTTON
   #define START_BTN_PIN         5
   #define START_BTN_GND         4
@@ -49,13 +49,13 @@
 #define LEDC_PWM_RESOLUTION     8
 
 // ================== Индикаторный светодиод кнопки «Старт» ==================
-#define HAS_START_BUTTON_LED    1
+#define HAS_START_BUTTON_LED    0
 #if HAS_START_BUTTON_LED
   #define START_LED_PIN         6
 #endif
 
 // ================== Светодиодная подсветка рабочей зоны ==================
-#define HAS_WORK_LIGHT          1
+#define HAS_WORK_LIGHT          0
 #if HAS_WORK_LIGHT
   #define WORK_LIGHT_CHANNELS   2
   #define WORK_LIGHT_POWER_MW   400
@@ -67,7 +67,7 @@
 #endif
 
 // ================== Статусный светодиод отладочной платы ==================
-#define HAS_STATUS_LED          1
+#define HAS_STATUS_LED          0
 #if HAS_STATUS_LED
   #define STATUS_LED_PIN        38
 #endif
