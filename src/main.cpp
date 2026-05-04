@@ -1,15 +1,23 @@
 /**
  * @file main.cpp
  * @brief Главный файл прошивки дефектоскопа. Инициализация, вывод системной информации,
- *        тестовое управление каналами нагревателя через Serial.
+ *        тестовое управление каналами нагревателя и подсветкой рабочей зоны через Serial.
  */
 
 #include <Arduino.h>
 #include "config.h"
 #include "heater_channel.h"
+#include "work_light_channel.h"
 
+// -------------------- Каналы нагревателя --------------------
 HeaterChannel heaterLeft(HEATER_LEFT_PIN);
 HeaterChannel heaterRight(HEATER_RIGHT_PIN);
+
+// -------------------- Каналы подсветки рабочей зоны --------------------
+#if HAS_WORK_LIGHT
+WorkLightChannel workLight1(WORK_LIGHT1_PIN, WORK_LIGHT1_LEDC_CHANNEL, WORK_LIGHT1_GND, GPIO_DRIVE_CAP_3);
+WorkLightChannel workLight2(WORK_LIGHT2_PIN, WORK_LIGHT2_LEDC_CHANNEL, WORK_LIGHT2_GND, GPIO_DRIVE_CAP_3);
+#endif
 
 // Чтение состояния аппаратного переключателя безопасности
 bool readHeaterEnableSwitch() {
@@ -75,7 +83,7 @@ void setup() {
     // Индикатор кнопки Старт
     Serial.printf("Start button LED: %s\n", HAS_START_BUTTON_LED ? "Present" : "Not installed");
 #if HAS_START_BUTTON_LED
-    Serial.printf("  Pin: %d\n", START_LED_PIN);
+    Serial.printf("  Pin: %d, LEDC channel: %d\n", START_LED_PIN, STATUS_LED_LEDC_CHANNEL);
 #endif
 
     // Подсветка рабочей зоны
@@ -84,8 +92,10 @@ void setup() {
     Serial.printf("  Channels: %d\n", WORK_LIGHT_CHANNELS);
     Serial.printf("  Total power: %d mW, max current per LED: %d mA\n",
                   WORK_LIGHT_POWER_MW, WORK_LIGHT_CURRENT_MA);
-    Serial.printf("  LED1: pin=%d, GND=%d\n", WORK_LIGHT1_PIN, WORK_LIGHT1_GND);
-    Serial.printf("  LED2: pin=%d, GND=%d\n", WORK_LIGHT2_PIN, WORK_LIGHT2_GND);
+    Serial.printf("  LED1: pin=%d, GND=%d, LEDC channel=%d\n",
+                  WORK_LIGHT1_PIN, WORK_LIGHT1_GND, WORK_LIGHT1_LEDC_CHANNEL);
+    Serial.printf("  LED2: pin=%d, GND=%d, LEDC channel=%d\n",
+                  WORK_LIGHT2_PIN, WORK_LIGHT2_GND, WORK_LIGHT2_LEDC_CHANNEL);
 #endif
 
     // Статусный LED платы
@@ -110,13 +120,22 @@ void setup() {
     Serial.println("\n=== Firmware Version ===");
     Serial.printf("%d.%d.%d\n", FW_VERSION_MAJOR, FW_VERSION_MINOR, FW_VERSION_PATCH);
 
-    // Инициализация нагревателя
+    // -------------------- Инициализация нагревателя --------------------
     heaterLeft.begin();
     heaterRight.begin();
 #if HAS_HEATER_ENABLE_SWITCH
     pinMode(HEATER_ENABLE_PIN, INPUT_PULLUP);
 #endif
-    Serial.println("\nHeater channels initialized. Ready for commands.");
+    Serial.println("\nHeater channels initialized.");
+
+    // -------------------- Инициализация подсветки --------------------
+#if HAS_WORK_LIGHT
+    workLight1.begin();
+    workLight2.begin();
+    Serial.println("Work light channels initialized.");
+#endif
+
+    Serial.println("Ready for commands.");
 }
 
 void loop() {
@@ -129,6 +148,7 @@ void loop() {
         String cmd = Serial.readStringUntil('\n');
         cmd.trim();
 
+        // ---------- Команды нагревателя ----------
         if (cmd == "on left") {
             if (!hwEnabled) {
                 Serial.println("Hardware switch off");
@@ -137,7 +157,6 @@ void loop() {
             } else if (!heaterLeft.canTurnOn()) {
                 uint32_t remaining = (static_cast<uint32_t>(HEATER_MIN_PAUSE_S) * 1000U)
                                      - (millis() - heaterLeft.getTurnOffTime());
-                // На ESP32 unsigned int – 32 бита, %u подходит под uint32_t
                 Serial.printf("Left BLOCKED (cooldown, %u ms left)\n", remaining);
             } else {
                 heaterLeft.turnOn();
@@ -178,7 +197,6 @@ void loop() {
                     heaterRight.turnOn();
                     Serial.println("Both ON");
                 } else {
-                    // Выводим причины по каждому каналу
                     if (!leftReady) {
                         if (heaterLeft.isOn()) {
                             Serial.print("Left already ON");
@@ -213,10 +231,65 @@ void loop() {
                           heaterLeft.isOn(), heaterRight.isOn(),
                           heaterLeft.canTurnOn(), heaterRight.canTurnOn());
         }
+
+        // ---------- Команды подсветки рабочей зоны ----------
+#if HAS_WORK_LIGHT
+        else if (cmd == "wl1 on") {
+            workLight1.turnOn();
+            Serial.printf("WorkLight1 ON (brightness: %d)\n", workLight1.getBrightness());
+        }
+        else if (cmd == "wl1 off") {
+            workLight1.turnOff();
+            Serial.println("WorkLight1 OFF");
+        }
+        else if (cmd.startsWith("wl1 ")) {
+            int b = cmd.substring(4).toInt();
+            b = constrain(b, 0, 255);
+            workLight1.setBrightness(b);
+            Serial.printf("WorkLight1 brightness set to %d\n", b);
+        }
+        else if (cmd == "wl2 on") {
+            workLight2.turnOn();
+            Serial.printf("WorkLight2 ON (brightness: %d)\n", workLight2.getBrightness());
+        }
+        else if (cmd == "wl2 off") {
+            workLight2.turnOff();
+            Serial.println("WorkLight2 OFF");
+        }
+        else if (cmd.startsWith("wl2 ")) {
+            int b = cmd.substring(4).toInt();
+            b = constrain(b, 0, 255);
+            workLight2.setBrightness(b);
+            Serial.printf("WorkLight2 brightness set to %d\n", b);
+        }
+        else if (cmd == "wl status") {
+            Serial.printf("WorkLight1: state=%d, brightness=%d\n",
+                          workLight1.isOn(), workLight1.getBrightness());
+            Serial.printf("WorkLight2: state=%d, brightness=%d\n",
+                          workLight2.isOn(), workLight2.getBrightness());
+        }
+        else if (cmd == "wl both on") {
+            workLight1.turnOn();
+            workLight2.turnOn();
+            Serial.println("Both WorkLights ON");
+        }
+        else if (cmd == "wl both off") {
+            workLight1.turnOff();
+            workLight2.turnOff();
+            Serial.println("Both WorkLights OFF");
+        }
+#endif
+
+        // ---------- Неизвестная команда ----------
         else if (cmd.length() > 0) {
-            Serial.println("Unknown command. Use: on left/right/both, off left/right/both, status");
+            Serial.println("Unknown command. Available:");
+            Serial.println("  Heater: on left/right/both, off left/right/both, status");
+#if HAS_WORK_LIGHT
+            Serial.println("  WorkLight: wl1 on/off/0..255, wl2 on/off/0..255,");
+            Serial.println("             wl status, wl both on/off");
+#endif
         }
     }
-
+ 
     delay(10);
 }

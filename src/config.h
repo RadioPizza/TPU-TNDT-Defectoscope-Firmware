@@ -6,7 +6,7 @@
  *  @{
  */
 #define FW_VERSION_MAJOR    0   /**< Мажорная версия */
-#define FW_VERSION_MINOR    3   /**< Минорная версия */
+#define FW_VERSION_MINOR    4   /**< Минорная версия */
 #define FW_VERSION_PATCH    0   /**< Патч-версия */
 /** @} */
 
@@ -80,9 +80,10 @@
 /** @defgroup start_led Индикаторный светодиод кнопки «Старт»
  *  @{
  */
-#define HAS_START_BUTTON_LED    0   /**< 0 — светодиод не используется, 1 — активен */
+#define HAS_START_BUTTON_LED        0   /**< 0 — светодиод не используется, 1 — активен */
 #if HAS_START_BUTTON_LED
-  #define START_LED_PIN         6   /**< Пин управления светодиодом */
+  #define START_LED_PIN             6   /**< Пин управления светодиодом */
+  #define STATUS_LED_LEDC_CHANNEL   2   /**< LEDC-канал для светодиода на кнопке */
 #endif
 /** @} */
 
@@ -90,15 +91,19 @@
  *  @brief Два белых светодиода по 200 мВт
  *  @{
  */
-#define HAS_WORK_LIGHT          0   /**< 0 — подсветка выключена, 1 — активна */
+#define HAS_WORK_LIGHT              1   /**< 0 — подсветка выключена, 1 — активна */
 #if HAS_WORK_LIGHT
-  #define WORK_LIGHT_CHANNELS   2   /**< Количество независимых каналов подсветки */
-  #define WORK_LIGHT_POWER_MW   400  /**< Суммарная мощность подсветки, мВт */
-  #define WORK_LIGHT1_PIN       37  /**< Сигнальный пин светодиода 1 */
-  #define WORK_LIGHT1_GND       36  /**< Земля светодиода 1 */
-  #define WORK_LIGHT2_PIN       3   /**< Сигнальный пин светодиода 2 */
-  #define WORK_LIGHT2_GND       8   /**< Земля светодиода 2 */
-  #define WORK_LIGHT_CURRENT_MA 20  /**< Номинальный ток одного светодиода, мА */
+  #define WORK_LIGHT_CHANNELS       2   /**< Количество независимых каналов подсветки */
+  #define WORK_LIGHT_POWER_MW       400 /**< Суммарная мощность подсветки, мВт */
+  #define WORK_LIGHT1_PIN           36  /**< Сигнальный пин светодиода 1 */
+  #define WORK_LIGHT1_GND           -1  /**< Земля светодиода 1 */
+  #define WORK_LIGHT1_LEDC_CHANNEL  0   /**< LEDC-канал для светодиода 1 */
+  #define WORK_LIGHT2_PIN           37  /**< Сигнальный пин светодиода 2 */
+  #define WORK_LIGHT2_GND           -1  /**< Земля светодиода 2 */
+  #define WORK_LIGHT2_LEDC_CHANNEL  1   /**< LEDC-канал для светодиода 2 */
+  #define WORK_LIGHT_CURRENT_MA     20  /**< Номинальный ток одного светодиода, мА */
+
+
 #endif
 /** @} */
 
