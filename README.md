@@ -1,9 +1,9 @@
+# TPU-TNDT-Defectoscope-Firmware
+
 ![Status](https://img.shields.io/badge/Status-Active%20development-orange)
 ![License](https://img.shields.io/badge/License-GPL--3.0-green)
 ![Platform](https://img.shields.io/badge/Platform-ESP32--S3-blue)
 ![Arduino](https://img.shields.io/badge/Framework-Arduino%20Core-red)
-
-# TPU-TNDT-Defectoscope-Firmware
 
 Прошивка для микроконтроллера ESP32-S3 в составе теплового дефектоскопа. Контроллер выполняет функции управления питанием нагревательных элементов (ламп), эмуляции USB-устройств ввода (USB-HID) и обмена данными с ПК по COM-порту (через USB-UART WCH CH343).
 
@@ -31,7 +31,8 @@
   
 - 2 твердотельных реле для управления лампами JT-SSR-25A 
   - Пины подключения: `HEATER_LEFT_PIN` - левое, `HEATER_RIGHT_PIN` - правое
-Лампы по 500 Вт с патроном GY-9,5
+
+- Лампы по 500 Вт с патроном GY-9,5
 
 - Джойстик K-Silver JH16 с датчиками Холла
 
